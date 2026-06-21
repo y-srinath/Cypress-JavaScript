@@ -1,12 +1,16 @@
 /// <reference types="cypress" />
-describe("SauceDemo Login", () => {
-  it("Logs in successfully", () => {
-    cy.visit("https://www.saucedemo.com");
+import { LoginPage } from "./pages/Login_Page";
 
-    cy.get('[data-test="username"]').type("standard_user");
-    cy.get('[data-test="password"]').type("secret_sauce");
-    cy.wait(3000);
-    cy.get('[data-test="login-button"]').click();
+const loginPage = new LoginPage();
+
+describe("SauceDemo - All Login Tests", () => {
+  beforeEach(() => {
+    cy.visit("https://www.saucedemo.com");
+  });
+
+  it("Valid Login & Adding item to cart", () => {
+    loginPage.enterCredentials("standard_user", "secret_sauce");
+    loginPage.clickLoginButton();
 
     cy.url().should("include", "/inventory.html");
     cy.get(".inventory_item").should("have.length.greaterThan", 0);
@@ -16,5 +20,15 @@ describe("SauceDemo Login", () => {
     cy.wait(3000);
 
     cy.get('[data-test="shopping-cart-link"]').click();
+  });
+
+  it("Invalid Login", () => {
+    loginPage.enterCredentials("locked_out_user", "secret_sauce");
+    loginPage.clickLoginButton();
+
+    cy.get('[data-test="error"]').should(
+      "contain",
+      "Sorry, this user has been locked out.",
+    );
   });
 });
