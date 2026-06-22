@@ -37,7 +37,5 @@ describe("HTTP Requests", () => {
         expect(response.status).to.eq(200);
       },
     );
-  }); 
-
-
+  });
 });
